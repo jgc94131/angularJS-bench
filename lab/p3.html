@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html ng-app="modp2" >
+  <head>
+    <title>AngularJS p2</title>
+    <link href="css/bootstrap.min.css" rel="stylesheet" />
+    <link href="css/bootstrap-responsive.min.css" rel="stylesheet" />
+    <link href="css/styles.css" rel="stylesheet" />
+  </head>
+
+  <body>
+    <h2>Hello Ticketmaster</h2>
+
+    <div class="container" ng-controller="Demo2">
+      <form novalidate class="simple-form">
+        Zipcode: <input type="text" ng-model="zipc" placeholder="zipcode" />
+        <br>
+        <input type="submit" ng-click="update(zipc)" value="Search" />
+      </form>
+
+        <br><br>
+      <b>Events for {{ zipcode }}</b>
+      <ul>
+        <li ng-repeat="cat in cats">{{ cat.name }} at <a href='{{cat.venue_url}}'> {{ cat.venue_name }}</a> {{cat.event_category}}</li> 
+      </ul>
+    </div>
+
+    <script src="js/angular.min.js"></script>
+
+    <script>
+       var modp2 = angular.module('modp2', []);
+
+       var controllers = {};
+
+       var apikey = "BroUmQrGpt5CqdSTOQVoEq6kRWZPfpD8";
+	   var baseUrl = "https://app.ticketmaster.com";
+
+       controllers.Demo2 = function( $scope, $http) {
+
+	   $scope.update = function(zip) {
+		  $scope.zipcode = angular.copy(zip);
+		  codeAddress(zip);
+   	      console.log("zipcode updated to " + zip);	
+		    
+		 // GET /discovery/v1/events.json?apikey=BroUmQrGpt5CqdSTOQVoEq6kRWZPfpD8&postalCode=94103 HTTP/1.1 
+         $http({
+           method:"GET",
+           url: baseUrl + "/discovery/v1/events.json?" +
+		       "apikey=" + apikey +
+		       "&postalCode="+ zip,
+           }).then( function successCallback(response) {
+               // console.log(response.data);
+               // Parse the response.
+               $scope.cats = [];
+               
+			   angular.forEach(response.data._embedded.events, function(element){
+				   evt = {"name": element.name , "id": element.id, 
+				      "venue_href": element._links.venue.href,
+				      "venue_url": baseUrl + element._links.venue.href + "&apikey=" + apikey,
+				      "venue_name": element._embedded.venue[0].name,
+			          "event_category": element._embedded.categories[0].name };
+   				   console.log(evt.venue_name);
+				   $scope.cats.push(evt);
+                   // Do other things.
+               });
+			  
+		   }, function errorCallback(response) {
+               // This time, we do not end up here!
+               console.log("error: " + response);
+           });
+	     };
+		 
+       };
+
+       modp2.controller(controllers);
+	   
+	   var geocoder = new google.maps.Geocoder();
+
+	   function codeAddress(addr) {
+	       geocoder.geocode( { 'address': addr}, function(results, status) {
+	         if (status == google.maps.GeocoderStatus.OK) {
+	           // map.setCenter(results[0].geometry.location);
+	           // var marker = new google.maps.Marker({
+	           //    map: map,
+	           //    position: results[0].geometry.location
+				   console.log(results);
+			   // });
+	         } else {
+	           // alert("Geocode was not successful for the following reason: " + status);
+	         }
+	       });
+	     }
+	   
+
+    </script>
+
+  </body>
+
+</html>

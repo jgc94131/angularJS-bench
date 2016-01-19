@@ -1,0 +1,32 @@
+
+
+why not expose content type negotiation
+
+why not provide a data dictionary / sample responses 
+
+why not provide an official client library for your favorite stacks
+
+==
+
+when exploring a venue, I can't follow a HATEOS link to events at the venue
+
+https://app.ticketmaster.com/discovery/v1/venues/131797
+
+
+===
+
+when exploring events with:
+
+https://app.ticketmaster.com/discovery/v1/events.json?zipCode=94103
+
+I'm getting events in Canada
+
+radius - what are the units?
+
+lat/long works: 37.773972%2C-122.431297
+
+Roxie venue id:  337831
+
+===
+
+
